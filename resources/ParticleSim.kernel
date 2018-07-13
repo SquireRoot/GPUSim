@@ -1,0 +1,27 @@
+void kernel ParticleSim(global const float* positions, global const int* velocities,
+					    global float* outPositions, global float* outVelocities) {
+	float timestep = 0.1;
+
+	const float mass = 1; // [grams]
+	const float g = 9.81; // [m/s]
+
+	int baseIndex = 2*get_global_id(0);
+	float posx = positions[baseIndex];
+	float posy = positions[baseIndex + 1];
+	float velx = velocities[baseIndex];
+	float vely = velocities[baseIndex + 1];
+
+	// apply gravity
+	float forcex = 0;
+	float forcey = -mass*g;
+
+	velx = velx + (forcey/mass)*timestep;
+	vely = vely + (forcex/mass)*timestep;
+	posx = posx + velx*timestep;
+	posy = posy + vely*timestep;
+
+	outPositions[baseIndex] = posx;
+	outPositions[baseIndex + 1] = posy;
+	outVelocities[baseIndex] = velx;
+	outVelocities[baseIndex + 1] = posy;
+}
