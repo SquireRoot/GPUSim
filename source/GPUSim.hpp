@@ -103,10 +103,10 @@ struct GPUSim {
 	const int sizeY = 1;
 	const int sizeZ = 1;
 	const float eqDistance = 1.0f;
-	const float springConst = 1.0f;
+	const float springConst = 2.0f;
 	const float dampingConst = 0.0f;
 	const float mass = 1.0f;
-	const float timeStep = 0.001f; // seconds per step
+	const float timeStep = 0.01f; // seconds per step
 
 	void loadBuffers() {
 		numPoints = sizeX * sizeY * sizeZ;
@@ -128,7 +128,8 @@ struct GPUSim {
 				}
 			}
 		}
-
+		
+		//points[0] = 0.5f;
 		points[1] = 1.0f;
 		outFile->writeLn(points, numIndicies);
 

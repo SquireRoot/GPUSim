@@ -8,7 +8,7 @@ public :
 	FileWriter(const char* fileName) {
 		file.open(fileName);
 		if (file) {
-			file << "ParticleSim\n";
+			//file << "ParticleSim\n";
 			file.flush();
 		}
 	}

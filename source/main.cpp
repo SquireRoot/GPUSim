@@ -10,12 +10,9 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
 	if (!sim.init()) return 1;
 	sim.loadBuffers();
 
-	sim.step();
-	sim.step();
-	sim.step();
-	sim.step();
-	sim.step();
-	sim.step();
+	for (int i = 0; i < 1000; i++) {
+		sim.step();
+	}
 
 	sim.stop();
 

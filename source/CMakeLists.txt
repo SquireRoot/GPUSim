@@ -4,13 +4,14 @@ project(GPUSim)
 
 #Make sure we can include everything in project directory
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
-include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/../thirdparty")
-include_directories("C:/Program Files (x86)/AMD APP SDK/3.0/include")
+#include_directories("C:/Program Files (x86)/AMD APP SDK/3.0/include")
+include_directories("C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v9.2/include")
 
 link_directories("${CMAKE_CURRENT_SOURCE_DIR}")
 link_directories("${CMAKE_CURRENT_SOURCE_DIR}/../thirdparty")
-link_directories("C:/Program Files (x86)/AMD APP SDK/3.0/lib/x86")
+#link_directories("C:/Program Files (x86)/AMD APP SDK/3.0/lib/x86")
+link_directories("C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v9.2/lib/Win32")
 
 #Find all source, header, and shader files to add to build 
 file(GLOB_RECURSE allCodeFiles RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "*.hpp" "*.cpp")
