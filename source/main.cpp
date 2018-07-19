@@ -1,15 +1,23 @@
 #include <Windows.h>
 #include "CL/cl.hpp"
 
+#include "FileIO.hpp"
 #include "Log.hpp"
 #include "GPUSim.hpp"
 
-using namespace GPUSim;
-
 int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
 
-	if (!initOpenCL()) return 1;
+	if (!sim.init()) return 1;
+	sim.loadBuffers();
 
+	sim.step();
+	sim.step();
+	sim.step();
+	sim.step();
+	sim.step();
+	sim.step();
+
+	sim.stop();
 
 	return 0;
 }

@@ -1,0 +1,71 @@
+void kernel getForce(global const float* pointsM1, global const float* distancesM1,
+					 global float* distances, global float* forces,
+					 global const int* size, global const float* args) {
+	// compute distances
+	int sizeX = size[0];
+	int sizeY = size[1];
+	int sizeZ = size[2];
+
+	float eqDistance = args[0];
+	float springConst = args[1];
+	float dampingConst = args[2];
+	float timeStep = args[4];
+
+	int pointIndex = get_global_id(0)*3;
+	int fpointIndex = pointIndex*3;
+	float x = pointsM1[pointIndex];
+	float y = pointsM1[pointIndex + 1];
+	float z = pointsM1[pointIndex + 2];
+ 
+ 	// make sure the point isn't on the last column before calculating force
+	if ((get_global_id(0) % sizeX) != (sizeX - 1)) { 
+		float xdiff = pointsM1[pointIndex + 3] - x;
+		float ydiff = pointsM1[pointIndex + 4] - y;
+		float zdiff = pointsM1[pointIndex + 5] - z;
+
+		float seperation = sqrt((xdiff*xdiff) + (ydiff*ydiff) + (zdiff*zdiff));
+		float force = -(dampingConst/(2*timeStep))*(seperation - distancesM1[pointIndex])
+						+ springConst*(seperation - eqDistance);
+		force = force / seperation; // scale force to create the unit vector
+		
+		forces[fpointIndex] = xdiff*force;
+		forces[fpointIndex + 1] = ydiff*force;
+		forces[fpointIndex + 2] = zdiff*force;
+		distances[pointIndex] = seperation;
+	}
+
+	// make sure the point isn't on the last row before calculating force
+	if ((get_global_id(0) % (sizeX*sizeY)) < (sizeY - 1)*sizeX) {
+		int ypointIndex = pointIndex + sizeX*3;
+		float xdiff = pointsM1[ypointIndex] - x;
+		float ydiff = pointsM1[ypointIndex + 1] - y;
+		float zdiff = pointsM1[ypointIndex + 2] - z;
+
+		float seperation = sqrt((xdiff*xdiff) + (ydiff*ydiff) + (zdiff*zdiff));
+		float force = -(dampingConst/(2*timeStep))*(seperation - distancesM1[pointIndex + 1])
+						+ springConst*(seperation - eqDistance);
+		force = force / seperation;
+
+		forces[fpointIndex + 3] = xdiff*force;
+		forces[fpointIndex + 4] = ydiff*force;
+		forces[fpointIndex + 5] = zdiff*force;
+		distances[pointIndex + 1] = seperation;
+	}
+
+	// make sure the point isnt on the last z layer before calculating force
+	if (get_global_id(0) < sizeX*sizeY*(sizeZ - 1)) {
+		int zpointIndex = pointIndex + sizeX*sizeY*3;
+		float xdiff = pointsM1[zpointIndex] - x;
+		float ydiff = pointsM1[zpointIndex + 1] - y;
+		float zdiff = pointsM1[zpointIndex + 2] - z;
+
+		float seperation = sqrt((xdiff*xdiff) + (ydiff*ydiff) + (zdiff*zdiff));
+		float force = -(dampingConst/(2*timeStep))*(seperation - distancesM1[pointIndex + 2])
+						+ springConst*(seperation - eqDistance);
+		force = force / seperation;
+		forces[fpointIndex + 6] = xdiff*force;
+		forces[fpointIndex + 7] = ydiff*force;
+		forces[fpointIndex + 8] = zdiff*force;
+		distances[pointIndex + 2] = seperation;
+	}
+}

@@ -1,0 +1,41 @@
+void kernel applyForce(global const float* pointsM1, global const float* pointsM2,
+					 global float* forces, global float* points,
+					 global const int* size, global const float* args) {
+	int sizeX = size[0];
+	int sizeY = size[1];
+	float mass = args[3];
+	float timeStep = args[4];
+
+	int baseIndex = get_global_id(0)*9;
+	float fNetX = forces[baseIndex] + forces[baseIndex + 3] + forces[baseIndex + 6];
+	float fNetY = forces[baseIndex + 1] + forces[baseIndex + 4] + forces[baseIndex + 7];
+	float fNetZ = forces[baseIndex + 2] + forces[baseIndex + 5] + forces[baseIndex + 8];
+
+	if ((get_global_id(0) % sizeX) != 0) {
+		int pointIndex = baseIndex - 9;
+		fNetX = fNetX - forces[pointIndex];
+		fNetY = fNetY - forces[pointIndex + 1];
+		fNetZ = fNetZ - forces[pointIndex + 2];
+	}
+
+	if ((get_global_id(0) % (sizeX*sizeY)) >= sizeX) {
+		int pointIndex = baseIndex - sizeX*9;
+		fNetX = fNetX - forces[pointIndex + 3];
+		fNetY = fNetY - forces[pointIndex + 4];
+		fNetZ = fNetZ - forces[pointIndex + 5];
+	}
+
+	if (get_global_id(0) >= sizeX*sizeY) {
+		int pointIndex = baseIndex - sizeX*sizeY*9;
+		fNetX = fNetX - forces[pointIndex + 6];
+		fNetY = fNetY - forces[pointIndex + 7];
+		fNetZ = fNetZ - forces[pointIndex + 8];
+	}
+
+	float fCoef = (timeStep*timeStep) / mass;
+	
+	baseIndex = get_global_id(0)*3;
+	points[baseIndex] = fCoef*fNetX + 2*pointsM1[baseIndex] - pointsM2[baseIndex];
+	points[baseIndex + 1] = fCoef*fNetY + 2*pointsM1[baseIndex + 1] - pointsM2[baseIndex + 1];
+	points[baseIndex + 2] = fCoef*fNetZ + 2*pointsM1[baseIndex + 2] - pointsM2[baseIndex + 2];
+}
