@@ -5,11 +5,15 @@ project(GPUSim)
 #Make sure we can include everything in project directory
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/../thirdparty")
+
+# 2 : Change this to your OpenCL include path
 include_directories("C:/Program Files (x86)/AMD APP SDK/3.0/include")
 #include_directories("C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v9.2/include")
 
 link_directories("${CMAKE_CURRENT_SOURCE_DIR}")
 link_directories("${CMAKE_CURRENT_SOURCE_DIR}/../thirdparty")
+
+# 3 : Change this to your OpenCL lib path
 link_directories("C:/Program Files (x86)/AMD APP SDK/3.0/lib/x86")
 #link_directories("C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v9.2/lib/Win32")
 
@@ -17,7 +21,7 @@ link_directories("C:/Program Files (x86)/AMD APP SDK/3.0/lib/x86")
 file(GLOB_RECURSE allCodeFiles RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "*.hpp" "*.cpp")
 
 add_executable(GPUSim WIN32 ${allCodeFiles})
-target_compile_definitions(GPUSim PRIVATE ParticleSimWin)
+target_compile_definitions(GPUSim PRIVATE GPUSimWin)
 
 target_link_libraries(GPUSim OpenGL32)
 target_link_libraries(GPUSim glew32)
